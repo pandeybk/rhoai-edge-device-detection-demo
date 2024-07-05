@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Predictions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .display-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px; /* Adjusts the space between the containers */
+            margin-top: 20px;
+        }
+        .predictions-container {
+            flex: 1;
+            min-width: 300px; /* Ensures the container doesn't get too narrow */
+        }
+        .image-container {
+            flex: 1;
+            min-width: 300px; /* Ensures the container doesn't get too narrow */
+        }
+        img {
+            max-width: 100%;
+            max-height: 400px; /* Adjusts the max height of the image */
+            height: auto;
+            border-radius: 8px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f2f2f2;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .loader {
+            border: 6px solid #f3f3f3; /* Light grey */
+            border-top: 6px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 20px auto; /* Center the loader */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image" accept="image/*">
+        <button type="button" onclick="handleImageUpload()">Upload</button>
+    </form>
+    <!-- Loader element -->
+    <div id="loader" class="loader"></div>
+    <div class="display-container">
+        <div class="predictions-container">
+            <h2>Predicted Categories</h2>
+            <ul id="predictions-list"></ul>
+        </div>
+        <div class="image-container">
+            <img id="uploaded-image" src="" alt="Uploaded Image" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        function handleImageUpload() {
+            const form = document.getElementById('upload-form');
+            const formData = new FormData(form);
+    
+            // Get CSRF token from cookies
+            const csrftoken = getCookie('csrftoken');
+    
+            // Display the loader
+            document.getElementById('loader').style.display = 'block';
+    
+            fetch('/upload/', {
+                method: 'POST',
+                body: formData,
+                headers: { "X-CSRFToken": csrftoken },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide the loader
+                document.getElementById('loader').style.display = 'none';
+
+                document.getElementById('uploaded-image').style.display = 'block';
+                document.getElementById('uploaded-image').src = data.uploaded_file_url;
+    
+                const predictionsList = document.getElementById('predictions-list');
+                predictionsList.innerHTML = '';
+                data.predictions.forEach(prediction => {
+                    const li = document.createElement('li');
+                    li.textContent = prediction;
+                    predictionsList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide the loader in case of error too
+                document.getElementById('loader').style.display = 'none';
+            });
+        }
+    </script>
+    
+</body>
+</html>

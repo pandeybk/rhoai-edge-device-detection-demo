@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-predictor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-predictor
+  template:
+    metadata:
+      labels:
+        app: image-predictor
+    spec:
+      serviceAccountName: image-predictor
+      containers:
+      - name: image-predictor
+        image: quay.io/bpandey/edgedev_port_detection:v1.0.0
+        securityContext:
+          runAsUser: 1001
+          allowPrivilegeEscalation: false
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: image-predictor-env
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      volumes:
+      - name: env-volume
+        secret:
+          secretName: image-predictor-env

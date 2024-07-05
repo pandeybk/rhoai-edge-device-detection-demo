@@ -1,0 +1,10 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: image-predictor-route
+spec:
+  to:
+    kind: Service
+    name: image-predictor-service
+  port:
+    targetPort: 8000

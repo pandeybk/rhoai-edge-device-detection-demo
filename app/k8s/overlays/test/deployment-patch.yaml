@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-predictor
+spec:
+  template:
+    spec:
+      containers:
+      - name: image-predictor
+        image: quay.io/bpandey/edgedev_port_detection:v1.0.1

@@ -1,0 +1,16 @@
+<!-- prediction_app/templates/prediction_app/error.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+</head>
+<body>
+    <h1>An Error Occurred</h1>
+    {% if error %}
+        <p>Error details: {{ error }}</p>
+    {% else %}
+        <p>Sorry, something went wrong.</p>
+    {% endif %}
+    <a href="{% url 'image_upload' %}">Try again</a>
+</body>
+</html>
