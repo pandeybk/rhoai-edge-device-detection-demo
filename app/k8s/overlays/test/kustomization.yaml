@@ -1,7 +1,7 @@
 resources:
   - ../../base
 
-namespace: bal-project
+namespace: edgerouter
 
 patches:
   - path: deployment-patch.yaml
