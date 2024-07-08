@@ -7,3 +7,6 @@ torchvision==0.17.2
 scikit-learn==1.5.1
 onnx==1.16.1
 requests==2.32.3
+kfp==2.8.0
+kfp-kubernetes==1.2.0
+boto==1.34.140

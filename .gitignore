@@ -4,3 +4,6 @@ runs/*
 app/venv
 .DS_Store
 .venv
+__pycache__
+image_detection_pipeline.yaml
+component_metadata
