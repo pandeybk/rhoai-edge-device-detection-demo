@@ -3,3 +3,4 @@ runs/*
 .ipynb_checkpoints/
 app/venv
 .DS_Store
+.venv
